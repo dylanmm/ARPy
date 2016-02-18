@@ -1,2 +1,2 @@
-# clp
-general packet creating command line tool in c 
+# ARPY
+The cute little ARP spoof tool
