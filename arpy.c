@@ -50,9 +50,6 @@ void print_usage();
 
 int main (int argc, char **argv){
   /* GETOPT SETUP */
-    /* FLAGS */
-    int sflag = 0; //<-- silent mode - no output
-    int vflag = 0; //<-- verbose mode - extra output
     /* Required FLAGS */
     char *target_ip = NULL;
     char *router_ip = NULL;
@@ -71,14 +68,8 @@ int main (int argc, char **argv){
   struct ether_arp router_arpreply;
   struct timespec t = { 1/*seconds*/, 0/*nanoseconds*/};    
  
-  while ((c = getopt(argc, argv, "sd:t:r:T:R:")) != -1){
+  while ((c = getopt(argc, argv, "d:t:r:T:R:")) != -1){
     switch (c){
-      case 's':
-        sflag = 1;
-        break;
-      case 'v':
-        vflag = 1;
-        break;
       case 'r':
         router_ip = optarg;
         break;
@@ -104,12 +95,6 @@ int main (int argc, char **argv){
     }
   }
 
-  sflag = 2; //temps to surpress warnings about unused variables
-  vflag = 2;
-  if (vflag || sflag)
-  {
-    /* code */
-  }
   if (router_ip == NULL || target_ip == NULL || router_mac == NULL || target_mac == NULL || device == NULL ) {
     print_usage();
     exit(EXIT_FAILURE);
@@ -215,7 +200,7 @@ int main (int argc, char **argv){
 }
 
 void print_usage() {
-    printf("arpy\t-d <networking device>\n\t-t <target IP> -T <target MAC>\n\t-r <router IP> -R <router MAC>\n");
+    printf("Usage:\tarpy\t-d <networking device>\n\t\t-t <target IP> -T <target MAC>\n\t\t-r <router IP> -R <router MAC>\n");
 }
 
 /* srcs:
