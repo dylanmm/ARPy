@@ -2,7 +2,7 @@
 The cute little ARP spoof tool.
 
 ## Installation
-TODO: Describe the installation process
+Build with `make` and install with `sudo make install`
 
 ## Usage
 ```
