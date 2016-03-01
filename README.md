@@ -1,5 +1,5 @@
 # ARPy
-A minimal ARP spoofing tool. Doesn't depend on any networking libraries.
+A minimal ARP spoofing tool that doesn't depend on any networking libraries.
 
 ## Installation
 Clone the repository:
